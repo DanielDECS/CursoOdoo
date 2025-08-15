@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+  odoo:
+    image: odoo:14.0
+    platform: linux/amd64
+    ports:
+      - "8069:8069"
+    depends_on:
+      - db
+    volumes:
+      - ./odoo.conf:/etc/odoo/odoo.conf # Configuration file
+      - ./local:/mnt/extra-addons/local # Local modules
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
