@@ -8,7 +8,6 @@ services:
       - db
     ports:
       - "8069:8069"
-    command: ["--xmlrpc-interface=0.0.0.0", "--xmlrpc-port=8069"]
     volumes:
       - odoo-data:/var/lib/odoo
       - ./odoo.conf:/etc/odoo/odoo.conf
