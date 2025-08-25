@@ -1,18 +1,28 @@
 version: '3.1'
+
 services:
   odoo:
     image: odoo:14.0
     platform: linux/amd64
-    ports:
-      - "8069:8069"
     depends_on:
       - db
+    ports:
+      - "8069:8069"
+    command: ["--xmlrpc-interface=0.0.0.0", "--xmlrpc-port=8069"]
     volumes:
-      - ./odoo.conf:/etc/odoo/odoo.conf # Configuration file
-      - ./local:/mnt/extra-addons/local # Local modules
+      - odoo-data:/var/lib/odoo
+      - ./odoo.conf:/etc/odoo/odoo.conf
+      - ./local:/mnt/extra-addons/local
+
   db:
     image: postgres:13
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  odoo-data:
+  db-data:
+
