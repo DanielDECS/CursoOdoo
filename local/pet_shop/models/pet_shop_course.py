@@ -3,8 +3,9 @@ from odoo import models, fields
 class PetShopPetCourse(models.Model):
     _name = "pet_shop.course"
     _description = "Training Pet Course"
+    _inherit = ["name.mixin"]
 
-    name = fields.Char(string="Name", required=True)
+    # name = fields.Char(string="Name", required=True)
 
     start_date = fields.Date(string="Start Date")
 

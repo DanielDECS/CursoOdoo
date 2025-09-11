@@ -8,6 +8,7 @@
     'maintainer': 'Daniel Soares',
     'application': True,
     'installable': True,
-    'license': 'AGPL-3'
+    'license': 'AGPL-3',
+    'depends': ['contacts'],
 }
 

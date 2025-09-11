@@ -1,5 +1,5 @@
-from odoo import models, fields, api    
-
+from odoo import models, fields, api   
+from odoo.exceptions import ValidationError
 
 class PetShopPet(models.Model):
     _name = "pet_shop.pet"
@@ -55,6 +55,12 @@ class PetShopPet(models.Model):
 
     owner_name = fields.Char(string="Owner Name", related="owner_id.name", store=True)
 
+    @api.constrains('birth_date')
+    def _check_birth_date(self):
+        for record in self:
+            if record.birth_date and record.birth_date > fields.Date.today():
+                raise ValidationError("The birth date cannot be in the future!")
+
     @api.depends('birth_date')
     def _compute_age(self):
         for record in self:
@@ -63,3 +69,8 @@ class PetShopPet(models.Model):
                 record.age = delta.days // 365
             else:
                 record.age = 0
+   
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'The name of the pet must be unique!'),
+        ('positive_weight', 'CHECK(weight > 0)', 'The weight must be positive!'),
+]
