@@ -9,6 +9,10 @@
     'application': True,
     'installable': True,
     'license': 'AGPL-3',
+    'data': [
+        'views/pet_shop_pet_views.xml',
+        'views/pet_shop_menus.xml',
+    ],
     'depends': ['contacts'],
 }
 

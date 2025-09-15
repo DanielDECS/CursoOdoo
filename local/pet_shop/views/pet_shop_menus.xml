@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+    
+        <menuitem 
+            id="pet_shop_menu_root"
+            name="Pet Shop"
+            web_icon="pet_shop, static/description/icon.png"
+        />
+
+
+        <menuitem 
+            id="pet_shop_menu"
+            name="Pets"
+            parent="pet_shop_menu_root"
+            action="pet_shop_pet_action"
+        />
+    
+    </data>
+    
+
+</odoo>

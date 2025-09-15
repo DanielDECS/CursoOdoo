@@ -49,11 +49,16 @@ class PetShopPet(models.Model):
         column2="course_id",
         )
     
-    currency_id = fields.Many2one(string="Currency", comodel_name="res.currency", required=True)
+    currency_id = fields.Many2one(string="Currency", comodel_name="res.currency")
     
     price = fields.Monetary(string="Price", currency_field="currency_id")
 
     owner_name = fields.Char(string="Owner Name", related="owner_id.name", store=True)
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'The name of the pet must be unique!'),
+        ('positive_weight', 'CHECK(weight > 0)', 'The weight must be positive!'),
+        ]
 
     @api.constrains('birth_date')
     def _check_birth_date(self):
@@ -70,7 +75,3 @@ class PetShopPet(models.Model):
             else:
                 record.age = 0
    
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'The name of the pet must be unique!'),
-        ('positive_weight', 'CHECK(weight > 0)', 'The weight must be positive!'),
-]

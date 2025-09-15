@@ -12,7 +12,7 @@ services:
       - odoo-data:/var/lib/odoo
       - ./odoo.conf:/etc/odoo/odoo.conf
       - ./local:/mnt/extra-addons/local
-
+    command: ${COMMAND}
   db:
     image: postgres:13
     environment:
