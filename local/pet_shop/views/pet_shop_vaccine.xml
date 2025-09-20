@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    
+        <record id="pet_shop_vaccine_view_form" model="ir.ui.view">
+            <field name="name">pet_shop.vaccine.view.form</field>
+            <field name="model">pet_shop.vaccine</field>
+            <field name="arch" type="xml">
+                <form string="Vaccine">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="vaccination_date" />
+                            <field name="pet_id" invisible="True" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="pet_shop_vaccine_action" model="ir.actions.act_window">
+            <field name="name">Vaccine</field>
+            <field name="res_model">pet_shop.vaccine</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="domain">[]</field>
+            <field name="context">{'default_pet_id': context.get('pet_id')}</field>
+        </record>
+    
+    </data>
+    
+
+</odoo>

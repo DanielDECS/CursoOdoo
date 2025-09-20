@@ -7,3 +7,5 @@ class PetShopPetType(models.Model):
     name = fields.Char(string="Name", required=True)
 
     description = fields.Text(string="Description")
+
+    color = fields.Integer(string="Color")

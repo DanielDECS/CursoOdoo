@@ -1,13 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
+        <record id="pet_shop_pet_view_search" model="ir.ui.view">
+            <field name="name">pet_shop.pet.view.search</field>
+            <field name="model">pet_shop.pet</field>
+            <field name="arch" type="xml">
+                <search string="Pets">
+                    <field name="name" />
+                    <field name="sex" />
+                    <field name="price" />
+                    <filter name="cubs" string="Cubs" domain="[('age', '&lt;=', 1)]"/>
+                    <filter name="adults" string="Adults" domain="[('age', '>', 1)]"/>
+                    <filter name="type" string="Types" context="{'group_by' : 'pet_type_id'}"/>
+                </search>
+            </field>
+        </record>
+    <record id="pet_shop_pet_view_kanban" model="ir.ui.view">
+        <field name="name">pet_shop.pet.view.kanban</field>
+        <field name="model">pet_shop.pet</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id" />
+                <field name="name" />
+                <field name="sex" />
+                <field name="price" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div 
+                                class="o_kanban_image_fill_left d-none d-md-block"
+                                t-attf-style="background-image: url('#{kanban_image('pet_shop.pet', 'photo', record.id.raw_value, placeholder)}');"
+                            />
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <ul>
+                                    <li> <field name="pet_type_id" /> </li>
+                                    <li> <field name="sex" /> </li>
+                                    <li> <field name="price" /> </li>
+                                </ul>
+                                <field name="currency_id" invisible="True" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
     <record id="pet_shop_pet_view_tree" model="ir.ui.view">
         <field name="name">pet_shop.pet.view.tree</field>
         <field name="model">pet_shop.pet</field>
         <field name="arch" type="xml">
             <tree string="Pets">
                 <field name="name"/>
+                <field name="pet_type_id"/>
                 <field name="sex" />
                 <field name="adopted" />
                 <field name="price" />
@@ -20,22 +69,79 @@
         <field name="model">pet_shop.pet</field>
         <field name="arch" type="xml">
             <form string="Pet">
+                <header>
+                    <button 
+                        name="adopt" 
+                        type="object" 
+                        string="Adopt" 
+                        class="oe_highlight"
+                        attrs="{'invisible': [('adopted', '=', True)]}"
+                    />
+                    <button 
+                        name="return_to_petshop" 
+                        type="object" 
+                        string="Return to Petshop"
+                        attrs="{'invisible': [('adopted', '=', False)]}"
+                    />
+                    <button 
+                        name="%(pet_shop_vaccine_action)d" 
+                        type="action" 
+                        string="Vaccinate"
+                        context="{'pet_id': id}"
+                    />
+                </header>
                 <sheet>
-                    <group string="Pet Information" name="profile_group">
-                        <field name="photo" widget="image" style="width:100px" />
-                        <field name="name" />
-                        <field name="bio" />
-                        <field name="sex" />
-                        <field name="birth_date" />
-                        <field name="age" />
-                        <field name="weight" />
+                    <div class="oe_button_box" name="button_box">
+                        <button 
+                            name="pet_enrolled_courses" 
+                            type="object" 
+                            string="Courses" 
+                            class="oe_stat_button" 
+                            icon="fa-book"
+                        />
+                    </div>
+                    <widget 
+                        name="web_ribbon" 
+                        title="Adopted" 
+                        bg_color="bg-success"
+                        attrs="{'invisible': [('adopted', '=', False)]}"
+                    />
+                    <field name="photo" widget="image" class="oe_avatar" />
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Pet Name..." />
+                        </h1>
+                        <field name="pet_type_id" />
+                    </div>
+                    <group>
+                        <group string="Pet Information" name="profile_group">
+                            <field name="sex" />
+                            <field name="bio" widget="text_emojis" />
+                            <field name="birth_date" />
+                            <field name="age" />
+                            <field name="weight" widget="percentage" />
+                        </group>
+                        <group string="Adoption Information" name="adoption_group">
+                            <field name="adopted" widget="toggle_button" />
+                            <field name="price" />
+                            <field name="currency_id" />
+                        </group>
                     </group>
-                    <group string="Adoption Information" name="adoption_group">
-                        <field name="adopted" />
-                        <field name="birth_certificate" />
-                        <field name="price" />
-                        <field name="currency_id" />
-                    </group>
+                    <notebook>
+                        <page name="vaccines" string="Vaccines">
+                            <field name="vaccine_ids" />
+                        </page>
+                        <page name="courses" string="Courses">
+                            <field 
+                            name="course_ids" 
+                            widget="many2many_tags"
+                            domain="[('price', '&lt;', 100)]"
+                            />
+                        </page>
+                         <page name="documents" string="Documents">
+                            <field name="birth_certificate" widget="pdf_viewer" />
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -44,7 +150,9 @@
     <record id="pet_shop_pet_action" model="ir.actions.act_window">
         <field name="name">Pets</field>
         <field name="res_model">pet_shop.pet</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="pet_shop_pet_view_search" />
+        <field name="domain">[]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create the first pet

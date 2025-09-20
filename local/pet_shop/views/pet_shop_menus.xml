@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <data>
-    
+
         <menuitem 
             id="pet_shop_menu_root"
             name="Pet Shop"
             web_icon="pet_shop, static/description/icon.png"
         />
 
-
         <menuitem 
             id="pet_shop_menu"
             name="Pets"
             parent="pet_shop_menu_root"
             action="pet_shop_pet_action"
+            sequence="1"
+        />
+
+        <menuitem
+            id="pet_shop_course_menu"
+            name="Courses"
+            action="pet_shop_course_action"
+            parent="pet_shop_menu_root"
+            sequence="2"
+        />
+
+        <menuitem 
+            id="configuration_menu"
+            name="Configuration"
+            parent="pet_shop_menu_root"
+            sequence="3"
+        />
+
+        <menuitem 
+            id="pet_shop_type_menu"
+            name="Pet Types"
+            action="pet_shop_pet_type_action"
+            parent="pet_shop_menu_root"
         />
     
     </data>
-    
-
 </odoo>

@@ -1,5 +1,8 @@
 from odoo import models, fields, api   
 from odoo.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class PetShopPet(models.Model):
     _name = "pet_shop.pet"
@@ -7,12 +10,17 @@ class PetShopPet(models.Model):
 
     name = fields.Char(string="Name", required=True)
 
+    pet_type_id = fields.Many2one(
+        string="Pet type",
+        comodel_name="pet_shop.pet.type",
+        )   
+
     bio = fields.Text(string="Bio", help= "A short description of the pet")
 
     sex = fields.Selection(string = "Sex", selection=[
         ("male", "Male"),
         ("female", "Female"),
-    ])
+        ])
 
     birth_certificate = fields.Binary(string="Birth Certificate", attachment=True)
 
@@ -25,7 +33,7 @@ class PetShopPet(models.Model):
 
     birth_date = fields.Date(string="Birth Date")
 
-    age = fields.Integer(string="Age" , readonly=True, compute="_compute_age")
+    age = fields.Integer(string="Age" , readonly=True, compute="_compute_age", store=True)
 
     weight = fields.Float(string="Weight (kg)", digits=(12, 2))
 
@@ -47,6 +55,7 @@ class PetShopPet(models.Model):
         relation="pet_shop_pet_course_rel",
         column1="pet_id",
         column2="course_id",
+        domain=[('price', '<', 100)],
         )
     
     currency_id = fields.Many2one(string="Currency", comodel_name="res.currency")
@@ -75,3 +84,20 @@ class PetShopPet(models.Model):
             else:
                 record.age = 0
    
+
+    def adopt(self):
+        _logger.info("Adopting pet {}".format(self.name))
+        self.adopted = True
+
+    def return_to_petshop(self):
+        _logger.info("Returning pet {} to pet shop".format(self.name))
+        self.adopted = False
+
+    def pet_enrolled_courses(self):
+        return {
+            'name': 'Courses',
+            'type': 'ir.actions.act_window',
+            'res_model': 'pet_shop.course',
+            'views': [[False, 'tree']],
+            'domain': [('id', 'in', self.course_ids.ids)],
+        }
